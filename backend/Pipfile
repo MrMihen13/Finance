@@ -1,0 +1,21 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+discord = "*"
+click = "*"
+django = "*"
+python-dotenv = "*"
+gunicorn = "*"
+whitenoise = "*"
+dj-database-url = "*"
+djangorestframework = "*"
+pytelegrambotapi = "*"
+
+[dev-packages]
+cowsay = "*"
+
+[requires]
+python_version = "3.10"
