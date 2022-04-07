@@ -14,6 +14,10 @@ dj-database-url = "*"
 djangorestframework = "*"
 pytelegrambotapi = "*"
 psycopg2 = "*"
+django-constance = "*"
+django-tgbot = "*"
+django-discordbot = "*"
+django-rest-swagger = "*"
 
 [dev-packages]
 cowsay = "*"
