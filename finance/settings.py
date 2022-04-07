@@ -8,19 +8,15 @@ import dj_database_url
 from pathlib import Path
 from dotenv import load_dotenv
 
-
 load_dotenv()
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'My_super_SECRET_KEY_1231209sxkjhbkjVvjsdc')
 
 DEBUG = os.environ.get('DEBUG', False) == 'True'
 
 ALLOWED_HOSTS = ['*']
-
 
 # Application definition
 
@@ -32,6 +28,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'rest_framework',
+    'django_tgbot',
+    'discordbot',
+    'rest_framework_swagger',
+
+    'counter13_bot',
     'core',
 ]
 
@@ -66,7 +68,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'finance.wsgi.application'
 
-
 # Database
 
 if DEBUG:
@@ -79,7 +80,6 @@ if DEBUG:
 else:
     db_from_env = dj_database_url.config(conn_max_age=600)
     DATABASES = {'default': db_from_env}
-
 
 # Password validation
 
@@ -98,7 +98,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 
 LANGUAGE_CODE = 'en-us'
@@ -108,7 +107,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 
@@ -122,3 +120,59 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Simplified static file serving.
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Bot settings
+
+DISCORD = {
+    'CLIENT_ID': 953318282725842974,
+    'TOKEN': 'OTUzMzE4MjgyNzI1ODQyOTc0.YjC01g.lTZ0E7bSiNJm6_L9Erp-rF8lxXk',
+    'BOT': 'Бот Счетовод',
+    'PREFIX': 'Префикс бота'
+}
+
+TELEGRAM = {
+    'TOKEN': os.environ.get('TELEGRAMBOT_TOKEN', None),
+    'NAME': 'Бот Счетовод',
+    'BOT_USERNAME': 'counter13_bot'
+}
+
+# Logging
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'console': {
+            'format': '%(name)-12s %(levelname)-8s %(message)s'
+        },
+        'file': {
+            'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s'
+        }
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'console'
+        },
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'formatter': 'file',
+            'filename': 'debug.log'
+        }
+    },
+    'loggers': {
+        '': {
+            'level': 'DEBUG',
+            'handlers': ['console', 'file']
+        }
+    }
+}
+
+# Rest Framework settings
+
+REST_FRAMEWORK = {'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'}
+
+# Auth
+
+AUTH_USER_MODEL = 'core.CustomUser'
