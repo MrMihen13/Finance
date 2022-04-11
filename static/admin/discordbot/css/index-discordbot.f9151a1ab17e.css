@@ -1,8 +1,0 @@
-@import url("colors-discordbot.f047c2c84f86.css");
-
-.app-discordbot * {
-    --primary: var(--discordbot-default);
-    --secondary: var(--discordbot-darkest);
-    --link-fg: var(--discordbot-dark);
-    --link-selected-fg: var(--discordbot-light);
-}
