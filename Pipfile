@@ -18,6 +18,9 @@ django-constance = "*"
 django-tgbot = "*"
 django-discordbot = "*"
 django-rest-swagger = "*"
+django-telegrambot = "*"
+telegram = "*"
+sentry-sdk = "*"
 
 [dev-packages]
 cowsay = "*"
