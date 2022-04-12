@@ -29,11 +29,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
-    'django_tgbot',
-    'discordbot',
     'rest_framework_swagger',
 
-    'counter13_bot',
     'core',
 ]
 
