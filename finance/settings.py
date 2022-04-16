@@ -75,8 +75,7 @@ if DEBUG:
         }
     }
 else:
-    db_from_env = dj_database_url.config(conn_max_age=600)
-    DATABASES = {'default': db_from_env}
+    DATABASES = {'default': dj_database_url.config(conn_max_age=600)}
 
 # Password validation
 
@@ -119,13 +118,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Bot settings
-
-DISCORD = {
-    'CLIENT_ID': 953318282725842974,
-    'TOKEN': 'OTUzMzE4MjgyNzI1ODQyOTc0.YjC01g.lTZ0E7bSiNJm6_L9Erp-rF8lxXk',
-    'BOT': 'Бот Счетовод',
-    'PREFIX': 'Префикс бота'
-}
 
 TELEGRAM = {
     'TOKEN': os.environ.get('TELEGRAMBOT_TOKEN', None),
