@@ -64,7 +64,7 @@ class Category(models.Model):
 class Cost(models.Model):
     name = models.CharField(max_length=128, verbose_name='Name', blank=False, null=False)
     amount = models.DecimalField(verbose_name='Amount', max_digits=12, decimal_places=2, blank=True, null=True)
-    category_id = models.ForeignKey(Category, verbose_name='Category', on_delete=models.CASCADE)
+    category_id = models.ForeignKey(Category, verbose_name='Category', on_delete=models.CASCADE, blank=True, null=True)
     user_id = models.ForeignKey(CustomUser, verbose_name='User', on_delete=models.CASCADE)
 
     def __str__(self):
