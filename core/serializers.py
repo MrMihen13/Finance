@@ -20,4 +20,10 @@ class CostListSerializer(serializers.ModelSerializer):
 class CostSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Cost
-        fields = ['name', 'amount', 'category_id']
+        fields = ['id', 'name', 'amount', 'category_id']
+
+
+class TelegramCostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Cost
+        fields = ['id', 'name', 'amount', 'telegram_user_id']

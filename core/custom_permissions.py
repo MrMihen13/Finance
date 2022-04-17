@@ -9,6 +9,6 @@ class IsOwner(permissions.BasePermission):
 
 
 class HasTelegramToken(permissions.BasePermission):
-    def has_object_permission(self, request, view, obj):
-        token = request.headers
-        return settings.TELEGRAM['TOKEN'] == token # TODO Пофиксить работу разрешения
+    def has_permission(self, request, view):
+        return settings.TELEGRAM['TOKEN'] == request.headers.get('Telegram-token')
+
