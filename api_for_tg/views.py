@@ -1,6 +1,11 @@
+import logging
+
 from rest_framework import generics, response, status
 
 from core import serializers, custom_permissions, models
+
+
+logger = logging.getLogger(__name__)
 
 
 class AddCostTelegramAPI(generics.CreateAPIView):
