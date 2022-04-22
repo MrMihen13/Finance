@@ -1,6 +1,6 @@
 from django.urls import path
 
-from api_for_tg import views
+from telegram_api import views
 
 
 urlpatterns = [

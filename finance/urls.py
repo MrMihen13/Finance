@@ -12,6 +12,6 @@ schema_view = get_swagger_view(title='Finance view')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/', include('core.urls')),
-    path('telegram/api/v1/', include('api_for_tg.urls')),
+    path('telegram/api/v1/', include('telegram_api.urls')),
     path('swagger', schema_view),
 ]
