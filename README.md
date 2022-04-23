@@ -10,7 +10,8 @@
 2. Run command `>> pipenv shell` for creating virtual environment
 3. Run command `>> pipenv install` for install project requirements
 4. Run command `>> python manage.py migrate` for complete project migrations
-5. Run command `>> python manage.py runserver` for run local server
+5. Run command `>> python manage.py collectstatic` for collect project`s static files
+6. Run command `>> python manage.py runserver` for run local server
 
 If you did everything correctly, you will see this text in your console.
 

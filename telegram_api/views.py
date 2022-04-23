@@ -24,7 +24,14 @@ class AddCostTelegramAPI(generics.CreateAPIView):
         serializer = self.serializer_class(data=data)
         if serializer.is_valid():
             serializer.save()
-        return response.Response(data={'msg': 'Successful'}, status=status.HTTP_200_OK)
+        return response.Response(data={'msg': 'Successful'}, status=status.HTTP_201_CREATED)
+
+    def get(self, request, *args, **kwargs):
+        if request.data.get('telegram_user_id') is None:
+            return response.Response(data={'error': 'user id is not provided'}, status=status.HTTP_400_BAD_REQUEST)
+        cost = self.queryset.filter(user_id__telegram_id=request.data.get('telegram_user_id')).first()
+        serializer = self.serializer_class(data=cost)
+        return response.Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
 class CostListTelegramAPI(generics.ListAPIView):
