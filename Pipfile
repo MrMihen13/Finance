@@ -21,6 +21,7 @@ django-telegrambot = "*"
 telegram = "*"
 sentry-sdk = "*"
 drf-yasg = "*"
+djoser = "*"
 
 [dev-packages]
 cowsay = "*"

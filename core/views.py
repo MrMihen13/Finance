@@ -19,7 +19,7 @@ class CostListApiView(generics.ListAPIView):
         return response.Response(status=status.HTTP_200_OK, data=serializer.data)
 
 
-class CreateCostApiView(generics.CreateAPIView):
+class CostRetrieveUpdateDestroyApiView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (permissions.IsAuthenticated, custom_permissions.IsOwner)
     serializer_class = serializers.CostSerializer
     queryset = models.Cost.objects.all()
@@ -30,12 +30,6 @@ class CreateCostApiView(generics.CreateAPIView):
         if serializer.is_valid():
             serializer.save(user_id=request.user)
         return response.Response(status=status.HTTP_200_OK, data=serializer.data)
-
-
-class RetrieveCostApiView(generics.RetrieveAPIView):
-    permission_classes = (permissions.IsAuthenticated, custom_permissions.IsOwner)
-    serializer_class = serializers.CostSerializer
-    queryset = models.Cost.objects.all()
 
 
 class CategoryListApiView(generics.ListAPIView):
@@ -49,8 +43,8 @@ class CategoryListApiView(generics.ListAPIView):
         return response.Response(status=status.HTTP_200_OK, data=serializer.data)
 
 
-class CreateCategoryApiView(generics.CreateAPIView):
-    permission_classes = (permissions.IsAuthenticated,)
+class CategoryRetrieveUpdateDestroyApiView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = (permissions.IsAuthenticated, custom_permissions.IsOwner)
     serializer_class = serializers.CategorySerializer
     queryset = models.Category.objects.all()
 
@@ -60,9 +54,3 @@ class CreateCategoryApiView(generics.CreateAPIView):
         if serializer.is_valid():
             serializer.save(user_id=request.user)
         return response.Response(status=status.HTTP_200_OK, data=serializer.data)
-
-
-class RetrieveCategoryApiView(generics.RetrieveAPIView):
-    permission_classes = (permissions.IsAuthenticated, custom_permissions.IsOwner)
-    serializer_class = serializers.CategorySerializer
-    queryset = models.Category.objects.all()

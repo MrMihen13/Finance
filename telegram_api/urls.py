@@ -4,6 +4,6 @@ from telegram_api import views
 
 
 urlpatterns = [
-    path('cost', views.AddCostTelegramAPI.as_view()),
+    path('cost', views.CostAddCreateDestroyTelegramAPI.as_view()),
     path('costs', views.CostListTelegramAPI.as_view()),
 ]
