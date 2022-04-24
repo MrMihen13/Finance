@@ -6,24 +6,22 @@ from core import models
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Category
-        fields = ['id', 'name', 'limit']
+        fields = ['id', 'name']
 
 
 class CostListSerializer(serializers.ModelSerializer):
     category_name = serializers.CharField(source='category_id.name')
+    date = serializers.DateTimeField(source='created_at', format="%Y-%m-%d %H:%M")
 
     class Meta:
         model = models.Cost
-        fields = ['id', 'name', 'amount', 'category_name']
+        fields = ['id', 'date', 'name', 'amount', 'category_name']
 
 
 class CostSerializer(serializers.ModelSerializer):
+    category_name = serializers.CharField(source='category_id.name', read_only=True)
+    date = serializers.DateTimeField(source='created_at', format="%Y-%m-%d %H:%M", read_only=True)
+
     class Meta:
         model = models.Cost
-        fields = ['id', 'name', 'amount', 'category_id']
-
-
-class TelegramCostSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Cost
-        fields = ['id', 'name', 'amount', 'telegram_user_id']
+        fields = ['id', 'date', 'name', 'amount', 'category_id', 'category_name']
