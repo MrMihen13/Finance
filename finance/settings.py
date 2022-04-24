@@ -4,13 +4,18 @@ Django settings for finance project.
 
 import os
 import dj_database_url
+import sentry_sdk
+
+from sentry_sdk.integrations.django import DjangoIntegration
 
 from pathlib import Path
 from dotenv import load_dotenv
 
 import core.pagination
 
+
 load_dotenv()
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -190,3 +195,13 @@ REST_FRAMEWORK = {
 # Auth
 
 AUTH_USER_MODEL = 'core.CustomUser'
+
+# Sentry settings
+
+sentry_sdk.init(
+    dsn=os.environ['SENTRY_DSN'],
+    integrations=[DjangoIntegration()],
+    environment=...,
+    traces_sample_rate=1.0,
+    send_default_pii=True
+)
