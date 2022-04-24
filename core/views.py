@@ -5,8 +5,9 @@ from django.db.models import Sum
 
 from rest_framework import generics, permissions, response, status
 
-from core import models, serializers
+from core import models, serializers, pagination
 from core import permissions as custom_permissions
+
 
 logger = logging.getLogger(__name__)
 
@@ -14,15 +15,16 @@ logger = logging.getLogger(__name__)
 class CostListApiView(generics.ListAPIView):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = serializers.CostListSerializer
-    queryset = models.Cost.objects.all()
+    pagination_class = pagination.CustomPagination
 
     def get_queryset(self):
         user = self.request.user
-        return self.queryset.filter(user_id=user.id)
+        return models.Cost.objects.filter(user_id=user.id)
 
-    def list(self, request, *args, **kwargs):  # TODO Добавить пагинацию
+    def list(self, request, *args, **kwargs):  # TODO фильтры по дате
         serializer = self.serializer_class(self.get_queryset(), many=True)
-        return response.Response(status=status.HTTP_200_OK, data=serializer.data)
+        page = self.paginate_queryset(serializer.data)
+        return self.get_paginated_response(page)
 
 
 class CostRetrieveUpdateDestroyApiView(generics.RetrieveUpdateDestroyAPIView):
@@ -54,17 +56,18 @@ class CostCreateApiView(generics.CreateAPIView):
         return response.Response(status=status.HTTP_201_CREATED, data=serializer.data)
 
 
-class CategoryListApiView(generics.ListAPIView):  # TODO Добавить пагинацию
+class CategoryListApiView(generics.ListAPIView):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = serializers.CategorySerializer
-    queryset = models.Category.objects.all()
+    pagination_class = pagination.CustomPagination
 
     def get_queryset(self):
-        return self.queryset.filter(user_id=self.request.user.id)
+        return models.Category.objects.filter(user_id=self.request.user.id)
 
     def list(self, request, *args, **kwargs):
         serializer = self.serializer_class(self.get_queryset(), many=True)
-        return response.Response(status=status.HTTP_200_OK, data=serializer.data)
+        page = self.paginate_queryset(serializer.data)
+        return self.paginate_queryset(page)
 
 
 class CategoryCreateApiView(generics.CreateAPIView):
