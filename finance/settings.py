@@ -8,6 +8,8 @@ import dj_database_url
 from pathlib import Path
 from dotenv import load_dotenv
 
+import core.pagination
+
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -105,7 +107,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
@@ -180,49 +182,11 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-    ]
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'core.pagination.CustomPagination',
+    'PAGE_SIZE': 1
 }
 
 # Auth
 
 AUTH_USER_MODEL = 'core.CustomUser'
-
-# Swagger settings
-
-SWAGGER_SETTINGS = {
-    'exclude_url_names': [],
-    'exclude_namespaces': [],
-    'api_version': '0.1',
-    'api_path': '/',
-    'relative_paths': False,
-    'enabled_methods': [
-        'get',
-        'post',
-        'put',
-        'patch',
-        'delete'
-    ],
-    'api_key': '',
-    'is_authenticated': False,
-    'is_superuser': False,
-    'unauthenticated_user': 'django.contrib.auth.models.AnonymousUser',
-    'permission_denied_handler': None,
-    'resource_access_handler': None,
-    'base_path': 'helloreverb.com/docs',
-    'info': {
-        'contact': 'apiteam@wordnik.com',
-        'description': 'This is a sample server Petstore server. '
-                       'You can find out more about Swagger at '
-                       '<a href="http://swagger.wordnik.com">'
-                       'http://swagger.wordnik.com</a> '
-                       'or on irc.freenode.net, #swagger. '
-                       'For this sample, you can use the api key '
-                       '"special-key" to test '
-                       'the authorization filters',
-        'license': 'Apache 2.0',
-        'licenseUrl': 'http://www.apache.org/licenses/LICENSE-2.0.html',
-        'termsOfServiceUrl': 'http://helloreverb.com/terms/',
-        'title': 'Swagger Sample App',
-    },
-    'doc_expansion': 'none',
-}
