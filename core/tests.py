@@ -3,6 +3,11 @@ from django.test import TestCase
 from core import models
 
 
+# TODO Добавить тесты регистрации
+# TODO Добавить тесты JWT авторизации
+# TODO Добавить тесты рефреш токена
+
+
 class SigninTest(TestCase):
     def setUp(self):
         self.username = 'test'
