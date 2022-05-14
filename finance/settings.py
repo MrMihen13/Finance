@@ -13,9 +13,7 @@ from dotenv import load_dotenv
 
 import core.pagination
 
-
 load_dotenv()
-
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -38,8 +36,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'drf_yasg',
-
     'djoser',
+    'django_filters',
 
     'core',
     'telegram_api',
@@ -110,13 +108,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-ru'
 
 TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 # Static files (CSS, JavaScript, Images)
 
@@ -130,14 +128,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Simplified static file serving.
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-# Bot settings
-
-TELEGRAM = {
-    'TOKEN': os.environ.get('TELEGRAMBOT_TOKEN', None),
-    'NAME': 'Бот Счетовод',
-    'BOT_USERNAME': 'counter13_bot'
-}
 
 # Logging
 
@@ -167,7 +157,7 @@ LOGGING = {
     'loggers': {
         '': {
             'level': 'DEBUG' if DEBUG else 'INFO',
-            'handlers': ['console', 'file']
+            'handlers': ['console', 'file' if DEBUG else None]
         }
     }
 }
@@ -175,6 +165,10 @@ LOGGING = {
 # Rest Framework settings
 
 REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+
+    'PAGE_SIZE': 2,
+
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
 
     'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
@@ -188,8 +182,8 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ],
-    'DEFAULT_PAGINATION_CLASS': 'core.pagination.CustomPagination',
-    'PAGE_SIZE': 1
+
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
 
 # Auth

@@ -1,3 +1,5 @@
+# TODO Написать краткое описание для каждого класса и функции
+
 from rest_framework import serializers
 
 from core import models

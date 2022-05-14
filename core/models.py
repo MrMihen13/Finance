@@ -1,3 +1,5 @@
+# TODO Написать краткое описание для каждого класса и функции
+
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.utils import timezone
@@ -18,7 +20,7 @@ class CustomUserManager(BaseUserManager):
 
         return user
 
-    def create_superuser(self, username, email, password):
+    def create_superuser(self, username, email, password):  # TODO Создание админа с тарифом pro
         if password is None:
             raise TypeError('Superusers must have a password.')
 
@@ -30,18 +32,16 @@ class CustomUserManager(BaseUserManager):
         return user
 
 
-class RatePlan(models.Model):  # TODO Создать модель для категорий
-    name = models.CharField(verbose_name='Name', max_length=128, null=False, blank=False)
-    # category_limit = models.DecimalField(verbose_name='Category Limit', max_digits=12, decimal_places=2, null=True, default=None)
+class CustomUser(AbstractBaseUser, PermissionsMixin):  # TODO Добавить JWT авторизацию (Временный токен, рефреш токен)
+    RATE_PlANS = [('free', 'Бесплатный'), ('base', 'Базовый'), ('professional', 'Профессиональный')]
 
-
-class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(verbose_name='Email', db_index=True, unique=True)
     username = models.CharField(verbose_name='Username', db_index=True, max_length=255, unique=True)
     first_name = models.CharField(verbose_name='First Name', max_length=30)
     last_name = models.CharField(verbose_name='Last Name', max_length=150)
 
-    current_plan = models.ForeignKey(RatePlan, verbose_name='Plan', blank=True, null=True, on_delete=models.PROTECT)
+    rate_plan = models.CharField(verbose_name='Rate plan', choices=RATE_PlANS, max_length=13,
+                                 default='free')  # TODO Предусмотреть добавление пробного периода
 
     telegram_id = models.CharField(verbose_name='Telegram ID', max_length=128, blank=True, null=True)
     discord_id = models.CharField(verbose_name='Discord ID', max_length=128, blank=True, null=True)
@@ -60,7 +60,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return self.username
 
 
-class Category(models.Model):
+class Category(models.Model):  # TODO Добавить лимит категорий для одного юзера
     name = models.CharField(max_length=128, verbose_name='Name', blank=False, null=False)
     limit = models.DecimalField(verbose_name='Limit', max_digits=12, decimal_places=2, blank=True, null=True)
     user_id = models.ForeignKey(CustomUser, verbose_name='User', on_delete=models.CASCADE, null=True, blank=True)
@@ -79,6 +79,3 @@ class Cost(models.Model):
 
     def __str__(self):
         return self.name
-
-
-
