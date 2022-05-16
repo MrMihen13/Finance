@@ -9,7 +9,7 @@ from django_filters import rest_framework
 from rest_framework import generics, status, response
 from rest_framework.permissions import IsAuthenticated
 
-from core import models, serializers, pagination
+from core import models, serializers
 from core import permissions as custom_permissions
 from core.utils.date_utils import get_month_end, get_month_start
 from core.utils.url_utils import get_next_month_url, get_prev_month_url
@@ -20,10 +20,8 @@ logger = logging.getLogger(__name__)
 class CostListApiView(generics.ListAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = serializers.CostListSerializer
-    pagination_class = pagination.PaginationWithMonth
     filter_backends = [rest_framework.DjangoFilterBackend, ]
     filterset_fields = ['category_id']
-    view_path = '/costs/'
 
     def get_queryset(self):
         user = self.request.user
@@ -38,18 +36,21 @@ class CostListApiView(generics.ListAPIView):
 
         month_end = get_month_end(month_start)
 
-        costs = self.get_queryset().filter(created_at__gte=month_start.date(), created_at__lte=month_end)
+        costs = self.get_queryset().filter(created_at__gte=month_start, created_at__lte=month_end)
 
         if request.GET.get('category_id'):
             costs = costs.filter(category_id=request.GET.get('category_id'))
 
         serializer = self.serializer_class(costs, many=True)
-        page = self.paginate_queryset(serializer.data)
+        page = self.pagination_class.paginate_queryset(serializer.data)
 
-        data = self.get_paginated_response(page)
+        data = self.pagination_class.get_paginated_response(page)
 
-        data.data['links']['next_month'] = get_next_month_url(request=request, month_end=month_end)
-        data.data['links']['prev_month'] = get_prev_month_url(request=request, month_start=month_start)
+        data.data['results'].append(dict(month_name=month_start.strftime('%B')))
+        data.data['links'] = dict(
+            next_month=get_next_month_url(request=request, month_end=month_end),
+            prev_month=get_prev_month_url(request=request, month_start=month_start)
+        )
 
         return data
 
@@ -113,7 +114,6 @@ class GetAnalyticsApiView(generics.GenericAPIView):  # TODO Добавить т�
     """Getting cost`s analytics for month"""
     permission_classes = (IsAuthenticated,)
     serializer_class = serializers.CostSerializer
-    view_path = '/analytics/'
 
     def get_queryset(self):
         return models.Cost.objects.filter(user_id=self.request.user.id)
@@ -133,7 +133,7 @@ class GetAnalyticsApiView(generics.GenericAPIView):  # TODO Добавить т�
 
         data = {
             'links': dict(
-                next_month=get_next_month_url(request=request,month_end=month_end),
+                next_month=get_next_month_url(request=request, month_end=month_end),
                 prev_month=get_prev_month_url(request=request, month_start=month_start)
             ),
             'results': dict(
@@ -154,7 +154,6 @@ class GetAnalyticsApiView(generics.GenericAPIView):  # TODO Добавить т�
                     })
 
         return response.Response(data=data, status=status.HTTP_200_OK)
-
 
 # TODO Апгрейд тарифного плана
 # TODO Добавить тесты для обновления тарифного плана

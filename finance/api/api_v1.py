@@ -18,8 +18,6 @@ urlpatterns = [
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='chema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='chema-redoc'),
     path('', include('core.urls')),
-    # TODO Настроить авторизацию через jwt
-    # TODO Научиться входить по jwt
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.jwt')),
     path('telegram/', include('telegram_api.urls')),
