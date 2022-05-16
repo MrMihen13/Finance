@@ -12,7 +12,7 @@ def get_next_month_url(request, month_end: datetime):
             break
         url_next_month += item + '/'
 
-    if (next_month.month - datetime.datetime.now().month) > 1:
+    if (next_month.month - datetime.datetime.now().month) > 1 and next_month.year == datetime.datetime.now().year:
         return None
 
     return url_next_month + f'{next_month.month}/{next_month.year}/'

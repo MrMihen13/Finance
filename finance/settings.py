@@ -11,7 +11,6 @@ from sentry_sdk.integrations.django import DjangoIntegration
 from pathlib import Path
 from dotenv import load_dotenv
 
-import core.pagination
 
 load_dotenv()
 
@@ -196,6 +195,7 @@ SWAGGER_SETTINGS = {
         'Bearer': {
             'type': 'apiKey',
             'name': 'Authorization',
+            'api_key_prefix': 'Bearer',
             'in': 'Header'
         }
     }
