@@ -1,5 +1,7 @@
 # TODO Написать краткое описание для каждого класса и функции
 
+from datetime import timedelta
+
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.utils import timezone
@@ -58,6 +60,17 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):  # TODO Добавить J
 
     def __str__(self):
         return self.username
+
+    @property
+    def token(self):
+        return self._create_token()
+
+    def _create_token(self):
+        ...  # TODO Логика добавления токена
+
+    @staticmethod
+    def _create_access_token(data: dict, expires_delta: timedelta = None):
+        ...  # TODO Логика добавления токена доступа
 
 
 class Category(models.Model):  # TODO Добавить лимит категорий для одного юзера

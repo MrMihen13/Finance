@@ -23,6 +23,7 @@ sentry-sdk = "*"
 drf-yasg = "*"
 djoser = "*"
 django-filter = "*"
+djangorestframework-simplejwt = "*"
 
 [dev-packages]
 cowsay = "*"

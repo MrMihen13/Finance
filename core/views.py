@@ -6,22 +6,21 @@ from django.utils import timezone
 from django.db.models import Sum
 from django_filters import rest_framework
 
-from rest_framework import generics, permissions, response, status
+from rest_framework import generics, status, response
+from rest_framework.permissions import IsAuthenticated
 
 from core import models, serializers, pagination
 from core import permissions as custom_permissions
-from core.utils import date_utils
-
+from core.utils.date_utils import get_month_end, get_month_start
+from core.utils.url_utils import get_next_month_url, get_prev_month_url
 
 logger = logging.getLogger(__name__)
 
-_API_VERSION = '/api/v1'
-
 
 class CostListApiView(generics.ListAPIView):
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (IsAuthenticated,)
     serializer_class = serializers.CostListSerializer
-    pagination_class = pagination.CustomPagination
+    pagination_class = pagination.PaginationWithMonth
     filter_backends = [rest_framework.DjangoFilterBackend, ]
     filterset_fields = ['category_id']
     view_path = '/costs/'
@@ -33,13 +32,11 @@ class CostListApiView(generics.ListAPIView):
     def get(self, request, *args, **kwargs):
 
         if self.kwargs.get('month') is None and self.kwargs.get('year') is None:
-            month_start = date_utils.get_month_start(timezone.now())
+            month_start = get_month_start(timezone.now())
         else:
             month_start = timezone.datetime(day=1, month=self.kwargs.get('month'), year=self.kwargs.get('year'))
 
-        month_end = date_utils.get_month_end(month_start)
-        next_month = month_end + datetime.timedelta(days=1)
-        prev_month = month_start - datetime.timedelta(days=1)
+        month_end = get_month_end(month_start)
 
         costs = self.get_queryset().filter(created_at__gte=month_start.date(), created_at__lte=month_end)
 
@@ -51,19 +48,14 @@ class CostListApiView(generics.ListAPIView):
 
         data = self.get_paginated_response(page)
 
-        data.data['links'][
-            'next_month'] = f'{request.META["HTTP_HOST"]}{_API_VERSION}{self.view_path}{next_month.month}/{next_month.year}/'
-        data.data['links'][
-            'prev_month'] = f'{request.META["HTTP_HOST"]}{_API_VERSION}{self.view_path}{prev_month.month}/{prev_month.year}/'
+        data.data['links']['next_month'] = get_next_month_url(request=request, month_end=month_end)
+        data.data['links']['prev_month'] = get_prev_month_url(request=request, month_start=month_start)
 
         return data
 
 
-#  TODO Добавить фильтрацию расходов по категории
-
-
 class CostRetrieveUpdateDestroyApiView(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = (permissions.IsAuthenticated, custom_permissions.IsOwner)
+    permission_classes = (IsAuthenticated, custom_permissions.IsOwner)
     serializer_class = serializers.CostSerializer
 
     def get_queryset(self):
@@ -71,7 +63,7 @@ class CostRetrieveUpdateDestroyApiView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class CategoryRetrieveUpdateDestroyApiView(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = (permissions.IsAuthenticated, custom_permissions.IsOwner)
+    permission_classes = (IsAuthenticated, custom_permissions.IsOwner)
     serializer_class = serializers.CategorySerializer
 
     def get_queryset(self):
@@ -79,7 +71,7 @@ class CategoryRetrieveUpdateDestroyApiView(generics.RetrieveUpdateDestroyAPIView
 
 
 class CostCreateApiView(generics.CreateAPIView):
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (IsAuthenticated,)
     serializer_class = serializers.CostSerializer
     queryset = models.Cost.objects.all()
 
@@ -92,9 +84,8 @@ class CostCreateApiView(generics.CreateAPIView):
 
 
 class CategoryListApiView(generics.ListAPIView):
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (IsAuthenticated,)
     serializer_class = serializers.CategorySerializer
-    pagination_class = pagination.CustomPagination
 
     def get_queryset(self):
         return models.Category.objects.filter(user_id=self.request.user.id)
@@ -106,7 +97,7 @@ class CategoryListApiView(generics.ListAPIView):
 
 
 class CategoryCreateApiView(generics.CreateAPIView):
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (IsAuthenticated,)
     serializer_class = serializers.CategorySerializer
     queryset = models.Category.objects.all()
 
@@ -118,53 +109,54 @@ class CategoryCreateApiView(generics.CreateAPIView):
         return response.Response(status=status.HTTP_201_CREATED, data=serializer.data)
 
 
-class GetAnalyticsApiView(generics.GenericAPIView):
+class GetAnalyticsApiView(generics.GenericAPIView):  # TODO Добавить тесты
     """Getting cost`s analytics for month"""
-    permission_classes = (permissions.IsAuthenticated,)  # TODO Добавить тесты
+    permission_classes = (IsAuthenticated,)
     serializer_class = serializers.CostSerializer
-    view_path = '/api/v1/analytics/'
+    view_path = '/analytics/'
 
     def get_queryset(self):
         return models.Cost.objects.filter(user_id=self.request.user.id)
 
     def get(self, request, month=None, year=None, *args, **kwargs):
-
         if month is None and year is None:
-            month_start = date_utils.get_month_start(timezone.now())
+            month_start = get_month_start(timezone.now())
         else:
             month_start = timezone.datetime(day=1, month=month, year=year)
 
-        month_end = date_utils.get_month_end(month_start)
-        next_month = month_end + datetime.timedelta(days=1)
-        prev_month = month_start - datetime.timedelta(days=1)
+        month_end = get_month_end(month_start)
 
         costs = self.get_queryset().filter(created_at__gte=month_start.date(), created_at__lte=month_end)
         categories = models.Category.objects.filter(user_id=self.request.user.id)
         full_amount = costs.aggregate(Sum('amount'))
+        print(categories)
 
         data = {
             'links': dict(
-                next_month=f'{request.META["HTTP_HOST"]}{_API_VERSION}{self.view_path}{next_month.month}/{next_month.year}/',
-                prev_month=f'{request.META["HTTP_HOST"]}{_API_VERSION}{self.view_path}{prev_month.month}/{prev_month.year}/'
+                next_month=get_next_month_url(request=request,month_end=month_end),
+                prev_month=get_prev_month_url(request=request, month_start=month_start)
             ),
             'results': dict(
                 full_amount=full_amount['amount__sum'], month_name=month_start.strftime('%B'), categories=[]
             ),
         }
 
-        if full_amount['amount__sum'] is not None:
+        if full_amount['amount__sum']:
 
             for obj in categories:
                 category_amount = costs.filter(category_id=obj.id).aggregate(Sum('amount'))
-                percent = round((category_amount['amount__sum'] * 100) / full_amount['amount__sum'])
 
-                data['results']['categories'].append({
-                    'id': obj.id, 'name': obj.name, 'total': category_amount['amount__sum'], 'percent': percent
-                })
+                if category_amount['amount__sum']:
+                    percent = round((category_amount['amount__sum'] * 100) / full_amount['amount__sum'])
+
+                    data['results']['categories'].append({
+                        'id': obj.id, 'name': obj.name, 'total': category_amount['amount__sum'], 'percent': percent
+                    })
 
         return response.Response(data=data, status=status.HTTP_200_OK)
 
+
 # TODO Апгрейд тарифного плана
 # TODO Добавить тесты для обновления тарифного плана
-# TODO Добавить экспорт данных в Excel
+
 # TODO Добавить экспорт данных в Excel
