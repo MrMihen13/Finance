@@ -35,6 +35,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_framework_simplejwt',
     'drf_yasg',
     'djoser',
     'django_filters',
@@ -178,13 +179,31 @@ REST_FRAMEWORK = {
     ],
 
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # 'rest_framework.authentication.TokenAuthentication',
+        # 'rest_framework.authentication.BasicAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
     ],
 
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
+
+# Swagger settings
+
+SWAGGER_SETTINGS = {
+    'USE_SESSION_AUTH': False,
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'Header'
+        }
+    }
+}
+
+# Djoser
+
+# TODO Добавить настройки для djoser авторизации
 
 # Auth
 
@@ -192,10 +211,11 @@ AUTH_USER_MODEL = 'core.CustomUser'
 
 # Sentry settings
 
-sentry_sdk.init(
-    dsn=os.environ['SENTRY_DSN'],
-    integrations=[DjangoIntegration()],
-    environment=...,
-    traces_sample_rate=1.0,
-    send_default_pii=True
-)
+# TODO Включить перед деплоем
+# sentry_sdk.init(
+#     dsn=os.environ['SENTRY_DSN'],
+#     integrations=[DjangoIntegration()],
+#     environment=...,
+#     traces_sample_rate=1.0,
+#     send_default_pii=True
+# )

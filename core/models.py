@@ -1,5 +1,7 @@
 # TODO Написать краткое описание для каждого класса и функции
 
+from datetime import timedelta
+
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.utils import timezone
