@@ -24,6 +24,7 @@ drf-yasg = "*"
 djoser = "*"
 django-filter = "*"
 djangorestframework-simplejwt = "*"
+openpyxl = "*"
 
 [dev-packages]
 cowsay = "*"

@@ -1,5 +1,3 @@
-# TODO Написать краткое описание для каждого класса и функции
-
 from rest_framework import permissions
 
 
@@ -10,7 +8,7 @@ class IsOwner(permissions.BasePermission):
 
 class OnlyProfessionalRatePlan(permissions.BasePermission):
     message = {
-        'errors': 'Rate plan error',  # TODO Скорректировать сообщение ограничении функционала тарифного плана
+        'errors': 'Rate plan error',
         'message': 'Ваш тарифный план не включает в себя данную функцию. '
     }
 
@@ -20,7 +18,7 @@ class OnlyProfessionalRatePlan(permissions.BasePermission):
 
 class BaseOrProfessionalRatePlan(permissions.BasePermission):
     message = {
-        'errors': 'Rate plan error',  # TODO Скорректировать сообщение ограничении функционала тарифного плана
+        'errors': 'Rate plan error',
         'message': 'Ваш тарифный план не включает в себя данную функцию.'
     }
 

@@ -1,7 +1,3 @@
-# TODO Написать краткое описание для каждого класса и функции
-
-from datetime import timedelta
-
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.utils import timezone
@@ -22,19 +18,20 @@ class CustomUserManager(BaseUserManager):
 
         return user
 
-    def create_superuser(self, username, email, password):  # TODO Создание админа с тарифом pro
+    def create_superuser(self, username, email, password):
         if password is None:
             raise TypeError('Superusers must have a password.')
 
         user = self.create_user(username, email, password)
         user.is_superuser = True
         user.is_staff = True
+        user.rate_plan = 'pro'
         user.save()
 
         return user
 
 
-class CustomUser(AbstractBaseUser, PermissionsMixin):  # TODO Добавить JWT авторизацию (Временный токен, рефреш токен)
+class CustomUser(AbstractBaseUser, PermissionsMixin):
     RATE_PlANS = [('free', 'Бесплатный'), ('base', 'Базовый'), ('professional', 'Профессиональный')]
 
     email = models.EmailField(verbose_name='Email', db_index=True, unique=True)
@@ -62,7 +59,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):  # TODO Добавить J
         return self.username
 
 
-class Category(models.Model):  # TODO Добавить лимит категорий для одного юзера
+class Category(models.Model):
     name = models.CharField(max_length=128, verbose_name='Name', blank=False, null=False)
     limit = models.DecimalField(verbose_name='Limit', max_digits=12, decimal_places=2, blank=True, null=True)
     user_id = models.ForeignKey(CustomUser, verbose_name='User', on_delete=models.CASCADE, null=True, blank=True)

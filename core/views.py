@@ -1,10 +1,11 @@
-# TODO Написать краткое описание для каждого класса и функции
-import datetime
 import logging
 
-from django.utils import timezone
+from openpyxl import Workbook
+
 from django.db.models import Sum
 from django_filters import rest_framework
+from django.conf import settings
+from django.http import HttpResponse
 
 from rest_framework import generics, status, response
 from rest_framework.permissions import IsAuthenticated
@@ -27,31 +28,21 @@ class CostListApiView(generics.ListAPIView):
         user = self.request.user
         return models.Cost.objects.filter(user_id=user.id)
 
-    def get(self, request, *args, **kwargs):
-
-        if self.kwargs.get('month') is None and self.kwargs.get('year') is None:
-            month_start = get_month_start(timezone.now())
-        else:
-            month_start = timezone.datetime(day=1, month=self.kwargs.get('month'), year=self.kwargs.get('year'))
-
+    def get(self, request, month=None, year=None, *args, **kwargs):
+        month_start = get_month_start(month=month, year=year)
         month_end = get_month_end(month_start)
-
         costs = self.get_queryset().filter(created_at__gte=month_start, created_at__lte=month_end)
 
         if request.GET.get('category_id'):
             costs = costs.filter(category_id=request.GET.get('category_id'))
 
         serializer = self.serializer_class(costs, many=True)
-        page = self.pagination_class.paginate_queryset(serializer.data)
-
-        data = self.pagination_class.get_paginated_response(page)
+        page = self.paginate_queryset(serializer.data)
+        data = self.get_paginated_response(page)
 
         data.data['results'].append(dict(month_name=month_start.strftime('%B')))
-        data.data['links'] = dict(
-            next_month=get_next_month_url(request=request, month_end=month_end),
-            prev_month=get_prev_month_url(request=request, month_start=month_start)
-        )
-
+        data.data['next_month'] = get_next_month_url(request=request, month_end=month_end)
+        data.data['prev_month'] = get_prev_month_url(request=request, month_start=month_start)
         return data
 
 
@@ -103,14 +94,22 @@ class CategoryCreateApiView(generics.CreateAPIView):
     queryset = models.Category.objects.all()
 
     def post(self, request, *args, **kwargs):
-        data = request.data
-        serializer = self.serializer_class(data=data)
-        if serializer.is_valid():
-            serializer.save(user_id=request.user)
-        return response.Response(status=status.HTTP_201_CREATED, data=serializer.data)
+        if settings.USER_CATEGORY_LIMIT >= self.queryset.filter(user_id=request.user.id).count():
+            data = request.data
+            serializer = self.serializer_class(data=data)
+
+            if serializer.is_valid():
+                serializer.save(user_id=request.user)
+
+            return response.Response(status=status.HTTP_201_CREATED, data=serializer.data)
+
+        return response.Response(status=status.HTTP_423_LOCKED, data={
+            'error': 'Category limit exceeded',
+            'message': 'Вы создали максимальное количество категорий'
+        })
 
 
-class GetAnalyticsApiView(generics.GenericAPIView):  # TODO Добавить тесты
+class GetAnalyticsApiView(generics.GenericAPIView):  # TODO Добавить тесты для получения аналитики
     """Getting cost`s analytics for month"""
     permission_classes = (IsAuthenticated,)
     serializer_class = serializers.CostSerializer
@@ -119,17 +118,12 @@ class GetAnalyticsApiView(generics.GenericAPIView):  # TODO Добавить т�
         return models.Cost.objects.filter(user_id=self.request.user.id)
 
     def get(self, request, month=None, year=None, *args, **kwargs):
-        if month is None and year is None:
-            month_start = get_month_start(timezone.now())
-        else:
-            month_start = timezone.datetime(day=1, month=month, year=year)
-
+        month_start = get_month_start(month=month, year=year)
         month_end = get_month_end(month_start)
 
         costs = self.get_queryset().filter(created_at__gte=month_start.date(), created_at__lte=month_end)
         categories = models.Category.objects.filter(user_id=self.request.user.id)
         full_amount = costs.aggregate(Sum('amount'))
-        print(categories)
 
         data = {
             'links': dict(
@@ -155,7 +149,48 @@ class GetAnalyticsApiView(generics.GenericAPIView):  # TODO Добавить т�
 
         return response.Response(data=data, status=status.HTTP_200_OK)
 
-# TODO Апгрейд тарифного плана
-# TODO Добавить тесты для обновления тарифного плана
 
-# TODO Добавить экспорт данных в Excel
+class UpgradeRatePlanApiView(generics.GenericAPIView):  # TODO Апгрейд тарифного плана
+    ...  # TODO Добавить тесты для обновления тарифного плана
+
+
+class ExelExportApiView(generics.GenericAPIView):  # TODO Добавить экспорт данных в Excel
+    permission_classes = (IsAuthenticated,)
+    serializer_class = serializers.ExcelExportSerializer
+
+    def get_queryset(self):
+        return models.Cost.objects.filter(user_id=self.request.user.id)
+
+    def get(self, request, month=None, year=None, *args, **kwargs):
+        month_start = get_month_start(month=month, year=year)
+        month_end = get_month_end(month_start)
+
+        costs = self.get_queryset().filter(created_at__gte=month_start.date(), created_at__lte=month_end)
+        serializer = self.serializer_class(costs, many=True)
+
+        workbook = Workbook()
+        worksheet = workbook.active
+        worksheet.title = 'Costs'
+
+        columns = ['Date', 'Name', 'Amount', 'Category Name', ]
+        row_num = 1
+
+        for col_num, column_title in enumerate(columns, 1):
+            cell = worksheet.cell(row=row_num, column=col_num)
+            cell.value = column_title
+
+        for costs in serializer.data:
+            row_num += 1
+
+            row = [costs['date'], costs['name'], costs['amount'], costs['category_name'], ]
+
+            for col_num, cell_value in enumerate(row, 1):
+                cell = worksheet.cell(row=row_num, column=col_num)
+                cell.value = cell_value
+
+        _response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        _response['Content-Disposition'] = f'attachment; filename="costs-{month_start.strftime("%B-%Y").lower()}.xlsx"'
+
+        workbook.save(_response)
+
+        return _response
