@@ -155,13 +155,6 @@ LOGGING = {
             'filename': 'debug.log'
         }
     },
-    'loggers': {
-        'django': {
-            'level': 'DEBUG' if DEBUG else 'INFO',
-            'handlers': ['console', 'file' if DEBUG else None],
-            'propagate': True
-        }
-    }
 }
 
 # Rest Framework settings
