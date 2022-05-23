@@ -31,7 +31,7 @@ class CustomUserManager(BaseUserManager):
         return user
 
 
-class CustomUser(AbstractBaseUser, PermissionsMixin):
+class CustomUser(AbstractBaseUser, PermissionsMixin):  # TODO Тесты авторизации
     RATE_PlANS = [('free', 'Бесплатный'), ('base', 'Базовый'), ('professional', 'Профессиональный')]
 
     email = models.EmailField(verbose_name='Email', db_index=True, unique=True)

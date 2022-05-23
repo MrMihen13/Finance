@@ -88,7 +88,7 @@ class CategoryListApiView(generics.ListAPIView):
         return self.get_paginated_response(page)
 
 
-class CategoryCreateApiView(generics.CreateAPIView):
+class CategoryCreateApiView(generics.CreateAPIView):  # TODO Тесты
     permission_classes = (IsAuthenticated,)
     serializer_class = serializers.CategorySerializer
     queryset = models.Category.objects.all()
@@ -109,7 +109,7 @@ class CategoryCreateApiView(generics.CreateAPIView):
         })
 
 
-class GetAnalyticsApiView(generics.GenericAPIView):  # TODO Добавить тесты для получения аналитики
+class GetAnalyticsApiView(generics.GenericAPIView):  # TODO Тесты
     """Getting cost`s analytics for month"""
     permission_classes = (IsAuthenticated,)
     serializer_class = serializers.CostSerializer
@@ -150,11 +150,11 @@ class GetAnalyticsApiView(generics.GenericAPIView):  # TODO Добавить т�
         return response.Response(data=data, status=status.HTTP_200_OK)
 
 
-class UpgradeRatePlanApiView(generics.GenericAPIView):  # TODO Апгрейд тарифного плана
-    ...  # TODO Добавить тесты для обновления тарифного плана
+class UpgradeRatePlanApiView(generics.GenericAPIView):  # TODO Тесты
+    ...  # TODO Апгрейд тарифного плана
 
 
-class ExelExportApiView(generics.GenericAPIView):  # TODO Добавить экспорт данных в Excel
+class ExelExportApiView(generics.GenericAPIView):  # TODO Тесты
     permission_classes = (IsAuthenticated,)
     serializer_class = serializers.ExcelExportSerializer
 

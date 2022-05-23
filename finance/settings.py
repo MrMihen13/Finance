@@ -209,8 +209,6 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": datetime.timedelta(days=1),
 }
 
-# Djoser  # TODO Добавить настройки для djoser авторизации
-
 # User setting
 
 USER_CATEGORY_LIMIT = 8
@@ -219,12 +217,12 @@ USER_CATEGORY_LIMIT = 8
 
 AUTH_USER_MODEL = 'core.CustomUser'
 
-# Sentry settings  # TODO Включить перед деплоем
+# Sentry settings
 
-# sentry_sdk.init(
-#     dsn=os.environ['SENTRY_DSN'],
-#     integrations=[DjangoIntegration()],
-#     environment=...,
-#     traces_sample_rate=1.0,
-#     send_default_pii=True
-# )
+sentry_sdk.init(
+    dsn=os.environ['SENTRY_DSN'],
+    integrations=[DjangoIntegration()],
+    environment=os.environ.get('SENTRY_ENVIRONMENT' 'Production'),
+    traces_sample_rate=1.0,
+    send_default_pii=True
+)
