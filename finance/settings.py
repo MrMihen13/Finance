@@ -158,7 +158,8 @@ LOGGING = {
     'loggers': {
         'django.request': {
             'level': 'DEBUG' if DEBUG else 'INFO',
-            'handlers': ['console', 'file' if DEBUG else None]
+            'handlers': ['console', 'file' if DEBUG else None],
+            'propagate': True
         }
     }
 }
