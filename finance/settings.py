@@ -158,7 +158,7 @@ LOGGING = {
     'loggers': {
         '': {
             'level': 'DEBUG' if DEBUG else 'INFO',
-            'handlers': ['console', 'file' if DEBUG else None]
+            'handlers': ['console', 'file']
         }
     }
 }
