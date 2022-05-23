@@ -4,7 +4,6 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-discord = "*"
 click = "*"
 django = "3.2.13"
 python-dotenv = "*"
