@@ -5,6 +5,7 @@ Django settings for finance project.
 import os
 import dj_database_url
 import sentry_sdk
+import datetime
 
 from sentry_sdk.integrations.django import DjangoIntegration
 
@@ -167,7 +168,7 @@ LOGGING = {
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
 
-    'PAGE_SIZE': 2,
+    'PAGE_SIZE': 15,
 
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
 
@@ -201,9 +202,16 @@ SWAGGER_SETTINGS = {
     }
 }
 
-# Djoser
+# JWT settings
 
-# TODO Добавить настройки для djoser авторизации
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": datetime.timedelta(minutes=60),
+    "REFRESH_TOKEN_LIFETIME": datetime.timedelta(days=1),
+}
+
+# User setting
+
+USER_CATEGORY_LIMIT = 8
 
 # Auth
 
@@ -211,11 +219,10 @@ AUTH_USER_MODEL = 'core.CustomUser'
 
 # Sentry settings
 
-# TODO Включить перед деплоем
-# sentry_sdk.init(
-#     dsn=os.environ['SENTRY_DSN'],
-#     integrations=[DjangoIntegration()],
-#     environment=...,
-#     traces_sample_rate=1.0,
-#     send_default_pii=True
-# )
+sentry_sdk.init(
+    dsn=os.environ['SENTRY_DSN'],
+    integrations=[DjangoIntegration()],
+    environment=os.environ.get('SENTRY_ENVIRONMENT' 'Production'),
+    traces_sample_rate=1.0,
+    send_default_pii=True
+)

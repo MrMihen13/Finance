@@ -1,5 +1,3 @@
-# TODO Написать краткое описание для каждого класса и функции
-
 from rest_framework import serializers
 
 from core import models
@@ -27,3 +25,12 @@ class CostSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Cost
         fields = ['id', 'date', 'name', 'amount', 'category_id', 'category_name']
+
+
+class ExcelExportSerializer(serializers.ModelSerializer):
+    category_name = serializers.CharField(source='category_id.name', read_only=True)
+    date = serializers.DateTimeField(source='created_at', format="%Y-%m-%d %H:%M", read_only=True)
+
+    class Meta:
+        model = models.Cost
+        fields = ['date', 'name', 'amount', 'category_name']
