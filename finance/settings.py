@@ -219,3 +219,4 @@ sentry_sdk.init(
 
 # Simplified static file serving.
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
