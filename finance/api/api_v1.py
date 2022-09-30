@@ -17,8 +17,7 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='chema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='chema-redoc'),
-    path('', include('core.urls')),
+    path('', include('cost.urls')),
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.jwt')),
-    path('telegram/', include('telegram_api.urls')),
 ]

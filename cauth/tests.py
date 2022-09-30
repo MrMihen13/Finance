@@ -1,14 +1,9 @@
-from django.test import TestCase
+from rest_framework import test
 
-from core import models
-
-
-# TODO Добавить тесты регистрации
-# TODO Добавить тесты JWT авторизации
-# TODO Добавить тесты рефреш токена
+from cauth import models
 
 
-class SigninTest(TestCase):
+class SigninTest(test.APITestCase):
     def setUp(self):
         self.username = 'test'
         self.password = '12test12'
@@ -28,14 +23,3 @@ class SigninTest(TestCase):
     def test_wrong(self):
         user = models.CustomUser.objects.filter(username='wrong_username').first()
         self.assertTrue(user is None)
-
-
-class TestCostView(TestCase):
-    ...
-
-
-class TestCategoryView(TestCase):
-    ...
-
-
-

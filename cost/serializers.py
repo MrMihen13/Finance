@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from core import models
+from cost import models
 
 
 class CategorySerializer(serializers.ModelSerializer):

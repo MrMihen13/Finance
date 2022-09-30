@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from core import models
+from cost import models
 
 
 @admin.register(models.Cost)
@@ -18,9 +18,3 @@ class CategoryAdmin(admin.ModelAdmin):
         if request.user.is_superuser:
             return queryset
         return queryset.filter(user_id=request.user.id)
-
-
-@admin.register(models.CustomUser)
-class CustomUserAdmin(admin.ModelAdmin):
-    list_display = ('email', 'username', 'is_active', 'telegram_id', 'discord_id')
-    list_filter = ('is_active', 'is_superuser')
