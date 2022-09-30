@@ -10,10 +10,10 @@ from django.http import HttpResponse
 from rest_framework import generics, status, response
 from rest_framework.permissions import IsAuthenticated
 
-from core import models, serializers
-from core import permissions as custom_permissions
-from core.utils.date_utils import get_month_end, get_month_start
-from core.utils.url_utils import get_next_month_url, get_prev_month_url
+from cost import models, serializers
+from cost import permissions as custom_permissions
+from cost.utils.date_utils import get_month_end, get_month_start
+from cost.utils.url_utils import get_next_month_url, get_prev_month_url
 
 logger = logging.getLogger(__name__)
 

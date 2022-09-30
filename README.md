@@ -1,8 +1,10 @@
-# Система контроля и анализа финансов
+# Finance
+
+## Система контроля и анализа финансов
 
 [Техническое задание на разработку](./docs/technical_requirements.md)
 
-[Репозиторий с Telegram ботом](https://github.com/MrMihen13/Finance-tgbot)
+[//]: # ([Репозиторий с Telegram ботом]&#40;https://github.com/MrMihen13/Finance-tgbot&#41;)
 
 ## Local run server
 

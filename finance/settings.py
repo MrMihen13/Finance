@@ -40,8 +40,9 @@ INSTALLED_APPS = [
     'djoser',
     'django_filters',
 
-    'core',
-    'telegram_api',
+    'cost',
+    'cauth',
+    'income',
 ]
 
 MIDDLEWARE = [
@@ -215,7 +216,7 @@ USER_CATEGORY_LIMIT = 8
 
 # Auth
 
-AUTH_USER_MODEL = 'core.CustomUser'
+AUTH_USER_MODEL = 'cauth.CustomUser'
 
 # Sentry settings
 
