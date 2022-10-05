@@ -11,13 +11,7 @@ gunicorn = "*"
 whitenoise = "*"
 dj-database-url = "*"
 djangorestframework = "*"
-pytelegrambotapi = "*"
-psycopg2 = "*"
 django-constance = "*"
-django-tgbot = "*"
-django-discordbot = "*"
-django-telegrambot = "*"
-telegram = "*"
 sentry-sdk = "*"
 drf-yasg = "*"
 djoser = "*"
@@ -26,7 +20,6 @@ djangorestframework-simplejwt = "*"
 openpyxl = "*"
 
 [dev-packages]
-cowsay = "*"
 
 [requires]
 python_version = "3.10"
