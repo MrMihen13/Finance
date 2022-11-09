@@ -220,7 +220,8 @@ AUTH_USER_MODEL = 'cauth.CustomUser'
 
 # Sentry settings
 
-sentry_sdk.init(
+if not DEBUG:
+    sentry_sdk.init(
     dsn=os.environ['SENTRY_DSN'],
     integrations=[DjangoIntegration()],
     environment=os.environ.get('SENTRY_ENVIRONMENT' 'Production'),
