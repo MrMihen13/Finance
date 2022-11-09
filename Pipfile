@@ -4,8 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-click = "*"
-django = "==3.2.9"
+django = "*"
 python-dotenv = "*"
 gunicorn = "*"
 whitenoise = "*"
@@ -23,3 +22,4 @@ openpyxl = "*"
 
 [requires]
 python_version = "3.10"
+python_full_version = "3.10.8"
