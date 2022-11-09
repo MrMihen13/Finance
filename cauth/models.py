@@ -41,8 +41,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):  # TODO Тесты авт�
     rate_plan = models.CharField(verbose_name='Rate plan', choices=RATE_PlANS, max_length=13,
                                  default='free')  # TODO Предусмотреть добавление пробного периода
 
-    telegram_id = models.CharField(verbose_name='Telegram ID', max_length=128, blank=True, null=True)
-    discord_id = models.CharField(verbose_name='Discord ID', max_length=128, blank=True, null=True)
+    telegram_uid = models.CharField(verbose_name='Telegram ID', max_length=128, blank=True, null=True)
 
     is_active = models.BooleanField(verbose_name='Is Active', default=True)
     is_staff = models.BooleanField(verbose_name='Is Staff', default=False)
