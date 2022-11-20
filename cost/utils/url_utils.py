@@ -36,3 +36,13 @@ def _remove_empty_items(array: list):
     for item in array:
         array.remove(item) if item == '' else None
     return array
+
+
+def add_months_navigation_links(data: dict, request, month_start: datetime, month_end: datetime) -> dict:
+    data['month'] = dict(month_name=month_start.strftime('%B'))
+
+    data['links'] = dict(
+        next_month=get_next_month_url(request=request, month_end=month_end),
+        prev_month=get_prev_month_url(request=request, month_start=month_start))
+
+    return data
